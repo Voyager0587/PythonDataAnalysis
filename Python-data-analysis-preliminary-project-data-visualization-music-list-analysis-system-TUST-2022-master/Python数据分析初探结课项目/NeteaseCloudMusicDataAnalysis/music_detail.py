@@ -7,8 +7,8 @@ import time
 
 def get_data_of_music_list_detail_page():
     """获取歌单详情页的信息"""
-    df = pd.read_csv('./music_data/music_list.csv', header=None, on_bad_lines=None, names=['url', 'title', 'play',
-                                                                                           'user'])
+    df = pd.read_csv('./music_data/music_list.csv', header=None, on_bad_lines='skip', names=['url', 'title', 'play',
+                                                                                             'user'])
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -42,18 +42,18 @@ def get_data_of_music_list_detail_page():
         # 获取歌单标题
         title = soup.select('h2')[0].get_text().replace(',', '，')
 
-        # 获取标签
-        tags = []
-        tags_message = soup.select('.u-tag i')
-
-        for p in tags_message:
-            tags.append(p.get_text())
-
-        # 对标签进行格式化
-        if len(tags) > 1:
-            tag = '-'.join(tags)
-        else:
-            tag = tags[0]
+        # # 获取标签
+        # tags = []
+        # tags_message = soup.select('.u-tag i')
+        #
+        # for p in tags_message:
+        #     tags.append(p.get_text())
+        #
+        # # 对标签进行格式化
+        # if len(tags) > 1:
+        #     tag = '-'.join(tags)
+        # else:
+        #     tag = tags[0]
 
         # 获取歌单介绍
         if soup.select('#album-desc-more'):
@@ -73,14 +73,19 @@ def get_data_of_music_list_detail_page():
         # 歌单评论数
         comments = soup.select('#cnt_comment_count')[0].get_text()
 
-        # 输出歌单详情页信息
-        print('\r', title, tag, text, collection, play, songs, comments, end='', flush=True)
+        # # 输出歌单详情页信息
+        # print('\r', title, tag, text, collection, play, songs, comments, end='', flush=True)
 
+        # 输出歌单详情页信息
+        print('\r', title, text, collection, play, songs, comments, end='', flush=True)
+        # # 将详情页信息写入CSV文件中
+        # with open('./music_data/music_detail.csv', 'a+', encoding='utf-8-sig') as f:
+        #     f.write(title + ',' + tag + ',' + text + ',' + collection + ',' + play + ',' + songs + ',' + comments +
+        #             '\n')
         # 将详情页信息写入CSV文件中
         with open('./music_data/music_detail.csv', 'a+', encoding='utf-8-sig') as f:
-            f.write(title + ',' + tag + ',' + text + ',' + collection + ',' + play + ',' + songs + ',' + comments +
+            f.write(title + ',' + ',' + text + ',' + collection + ',' + play + ',' + songs + ',' + comments +
                     '\n')
-
         # 获取歌单内歌曲名称
         li = soup.select('.f-hide li a')
 
