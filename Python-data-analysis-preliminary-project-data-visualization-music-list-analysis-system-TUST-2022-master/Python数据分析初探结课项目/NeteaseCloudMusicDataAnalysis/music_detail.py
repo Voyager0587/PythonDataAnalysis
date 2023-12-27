@@ -89,7 +89,7 @@ def get_data_of_music_list_detail_page():
         #     f.write(title + ',' + ',' + text + ',' + collection + ',' + play + ',' + songs + ',' + comments +
         #             '\n')
         # 获取歌单内歌曲名称
-        li = soup.select('.f-hide li a')
+        li = soup.select('.txt a b')
 
         for j in li:
             with open('./music_data/music_name.csv', 'a+', encoding='utf-8-sig') as f:
