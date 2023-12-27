@@ -27,7 +27,7 @@ def get_data_of_music_list_index_page():
 
         time.sleep(0.02)
 
-    for i in range(0, 1330, 35):
+    for i in range(735, 2000, 35):
         # print('\r', i, end='', flush=True)
 
         time.sleep(2)
