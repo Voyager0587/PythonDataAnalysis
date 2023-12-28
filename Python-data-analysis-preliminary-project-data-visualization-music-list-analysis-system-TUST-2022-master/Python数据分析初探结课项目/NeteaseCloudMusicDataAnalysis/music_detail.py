@@ -9,10 +9,13 @@ def get_data_of_music_list_detail_page():
     """获取歌单详情页的信息"""
     df = pd.read_csv('./music_data/music_list.csv', header=None, on_bad_lines='skip', names=['url', 'title', 'play',
                                                                                              'user'])
-
-    headers = {
+    headers_chrome = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/63.0.3239.132 Safari/537.36 '
+    }
+    
+    headers_iphone = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25'
     }
 
     print("正在获取歌单详情页的信息...")
@@ -35,7 +38,7 @@ def get_data_of_music_list_detail_page():
         time.sleep(2)
 
         url = 'https://music.163.com' + i
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=headers_chrome)
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
 
@@ -79,20 +82,28 @@ def get_data_of_music_list_detail_page():
         print('\r', title, tag, text, collection, play, songs, comments, end='', flush=True)
 
         # # 输出歌单详情页信息
-        # print('\r', title, text, collection, play, songs, comments, end='', flush=True)
+        print('\r', title, text, collection, play, songs, comments, end='', flush=True)
+        
         # 将详情页信息写入CSV文件中
         with open('./music_data/music_detail.csv', 'a+', encoding='utf-8-sig') as f:
             f.write(title + ',' + tag + ',' + text + ',' + collection + ',' + play + ',' + songs + ',' + comments +
                     '\n')
-        # # 将详情页信息写入CSV文件中
-        # with open('./music_data/music_detail.csv', 'a+', encoding='utf-8-sig') as f:
-        #     f.write(title + ',' + ',' + text + ',' + collection + ',' + play + ',' + songs + ',' + comments +
-        #             '\n')
+
+
+    for i in df['url']:
+        time.sleep(2)
+
+        url = 'https://music.163.com' + i
+        response = requests.get(url=url, headers=headers_iphone)
+        html = response.text
+        soup = BeautifulSoup(html, 'html.parser')
         # 获取歌单内歌曲名称
-        li = soup.select('.txt a b')
+        li = soup.select('.sgchfl .f-thide')
+        # print(li.get_text())
 
         for j in li:
+            print(j.get_text())
             with open('./music_data/music_name.csv', 'a+', encoding='utf-8-sig') as f:
-                f.write(j.get_text() + '\n')
+                f.write(j.get_text().replace(",", " ") + '\n')
 
     print("\n已获取歌单详情页的信息，保存至 music_data/music_name.csv")
