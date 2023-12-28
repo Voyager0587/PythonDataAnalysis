@@ -8,7 +8,6 @@ import time
 def data_visualization_of_top_10_of_ea_song_collection():
     """网易云音乐欧美歌单收藏 TOP10"""
     df = pd.read_csv('./music_data/music_detail.csv', header=None)
-
     print("正在生成网易云音乐欧美歌单收藏 TOP10 图片...")
 
     # 输出进度条
@@ -22,7 +21,7 @@ def data_visualization_of_top_10_of_ea_song_collection():
         dur = time.perf_counter() - start
 
         print("\r{:^3.0f}%[{}->{}]{:.2f}s".format(progress,
-              finsh, need_do, dur), end="")
+                                                  finsh, need_do, dur), end="")
 
         time.sleep(0.02)
 
@@ -58,7 +57,7 @@ def data_visualization_of_top_10_of_ea_song_collection():
     # 数据排序
     names = df.sort_values(by='collection', ascending=False)[0][:10]
     collections = df.sort_values(by='collection', ascending=False)[
-        'collection'][:10]
+                      'collection'][:10]
 
     # 设置显示数据
     names = [i for i in names]
@@ -83,23 +82,23 @@ def data_visualization_of_top_10_of_ea_song_collection():
     # 设置坐标轴颜色
     lines.spines['right'].set_color('none')
     lines.spines['top'].set_color('none')
-    lines.spines['left'].set_color((64/255, 64/255, 64/255))
-    lines.spines['bottom'].set_color((64/255, 64/255, 64/255))
+    lines.spines['left'].set_color((64 / 255, 64 / 255, 64 / 255))
+    lines.spines['bottom'].set_color((64 / 255, 64 / 255, 64 / 255))
 
     # 设置坐标轴刻度
     lines.xaxis.set_ticks_position('none')
     lines.yaxis.set_ticks_position('none')
 
     # 绘制柱状图,设置柱状图颜色
-    data.plot.barh(ax=ax, width=0.7, alpha=0.7, color=(8/255, 88/255, 121/255))
+    data.plot.barh(ax=ax, width=0.7, alpha=0.7, color=(8 / 255, 88 / 255, 121 / 255))
 
     # 添加标题,设置字体属性
     ax.set_title('网易云音乐欧美歌单收藏 TOP10', fontsize=18, fontweight='light')
 
     # 添加歌单收藏数量文本
     for x, y in enumerate(data.values):
-        num = str(y/10000)
-        plt.text(y+20000, x-0.08, '%s' % (num + '万'), ha='center')
+        num = str(y / 10000)
+        plt.text(y + 20000, x - 0.08, '%s' % (num + '万'), ha='center')
 
     # 保存图片
     plt.savefig('./music_image/top_10_of_ea_song_collection.png', dpi=None)
