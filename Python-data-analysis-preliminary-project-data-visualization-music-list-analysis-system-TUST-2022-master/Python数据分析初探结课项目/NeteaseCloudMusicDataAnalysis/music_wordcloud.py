@@ -9,6 +9,8 @@ import time
 def data_visualization_of_music_wordcloud():
     """歌单介绍词云图"""
     df = pd.read_csv('./music_data/music_detail.csv', header=None)
+    # header=None 时，Pandas 将不会将文件的第一行作为列名，而是从零开始为列分配索引
+
     text = ''
 
     print("正在生成歌单介绍词云图片...")
