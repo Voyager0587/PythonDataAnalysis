@@ -34,7 +34,8 @@ def mark_as_visited(url):
 
 def crawl_music_list_detail(url, headers):
     """爬取音乐列表详情页的信息"""
-    response = requests.get(url=url, headers=headers)
+    url_query = 'https://music.163.com' + url
+    response = requests.get(url=url_query, headers=headers)
     html = response.text
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -84,7 +85,8 @@ def crawl_music_list_detail(url, headers):
 
 
 def crawl_music_list_musics(url, headers):
-    response = requests.get(url=url, headers=headers)
+    url_query = 'https://music.163.com' + url
+    response = requests.get(url=url_query, headers=headers)
     html = response.text
     soup = BeautifulSoup(html, 'html.parser')
     # 获取歌单内歌曲名称
@@ -96,7 +98,8 @@ def crawl_music_list_musics(url, headers):
             f.write(j.get_text().replace(",", " ") + '\n')
 
 
-def get_data_of_music_list_detail_page():
+
+def run_spider():
     """执行爬虫任务"""
     print("正在获取歌单详情页的信息...")
     headers_chrome = {
@@ -108,19 +111,33 @@ def get_data_of_music_list_detail_page():
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) '
                       'Version/6.0 Mobile/10A5376e Safari/8536.25'
     }
-    for url in df['url']:
+    # 动态分配任务到队列
+    for index, row in df.iterrows():
+        url = row['url']
         if not is_url_visited(url):
             enqueue_url(url)
+
+    # for url in df['url']:
+    #     if not is_url_visited(url):
+    #         enqueue_url(url)
 
     while True:
         url_bytes = r.rpop(URL_QUEUE_KEY)
         if not url_bytes:
             break  # 如果队列为空，则退出循环
+
         # 将二进制数据解码为字符串
         url = url_bytes.decode('utf-8')  # 假设使用的是 UTF-8 编码，根据实际情况进行修改
-        crawl_music_list_detail('https://music.163.com' + url, headers_chrome)
-        crawl_music_list_musics('https://music.163.com' + url, headers_iphone)
+        if url and not is_url_visited(url):
+            # 在这里执行爬取操作，例如：
+            crawl_music_list_detail(url, headers_chrome)
+            crawl_music_list_musics(url, headers_iphone)
+            mark_as_visited(url)
 
     print("\n已获取歌单详情页的信息，保存至 music_data/music_name.csv")
 
+
+def get_data_of_music_list_detail_page():
+    # 运行多个爬虫节点，假设创建 3 个爬虫节点
+    run_spider()
 
